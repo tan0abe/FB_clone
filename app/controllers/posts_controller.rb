@@ -1,5 +1,7 @@
 class PostsController < ApplicationController
-  before_action :set_post, only: [:edit, :update, :destroy]
+  before_action :set_post, only: [:show, :edit, :update, :destroy]
+  before_action :correct_user, only: [:edit, :update, :destroy]
+  before_action :logged_in_user, except: [:index, :show]
 
   def new
     @post = Post.new
@@ -18,6 +20,10 @@ class PostsController < ApplicationController
 
   def index
     @posts = Post.all
+  end
+
+  def show
+    
   end
 
   def edit
@@ -52,5 +58,21 @@ class PostsController < ApplicationController
 
   def set_post
     @post = Post.find(params[:id])
+  end
+
+  def logged_in_user
+    unless logged_in?
+      flash[:danger] = "ログインしてください！"
+      redirect_to new_session_path
+    end
+  end
+
+   def correct_user
+    if current_user.present? #ログインしていない時は、current_user.idを確かめないので、current_userがnilというエラーにならない
+      unless current_user.id == @post.user_id
+        flash[:danger] = "他の人の投稿は編集できません！"
+        redirect_to posts_path
+      end
+    end
   end
 end
