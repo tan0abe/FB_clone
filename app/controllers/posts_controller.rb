@@ -23,16 +23,14 @@ class PostsController < ApplicationController
   end
 
   def show
-    
   end
 
   def edit
-
   end
 
   def confirm
     @post = current_user.posts.build(post_params)
-    render 'new' if @post.invalid?
+    render 'new' if @post.invalid? flash.now[:danger] = "すべて入力しないと投稿できませんT_T"
   end
 
   def update
@@ -40,7 +38,7 @@ class PostsController < ApplicationController
       flash[:notice] = "更新しました"
       redirect_to posts_path
     else
-      flash[:danger] = "更新できませんでした"
+      flash.now[:danger] = "更新できませんでした"
       render 'edit'
     end
   end
